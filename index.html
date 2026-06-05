@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstroAI — Your Cosmic Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold2: #E8D5A3;
+  --deep: #080810;
+  --s1: #0F0F1C;
+  --s2: #161625;
+  --s3: #1E1E30;
+  --border: rgba(201,168,76,0.18);
+  --text: #EEEAE4;
+  --muted: rgba(238,234,228,0.45);
+  --red: #E24B4A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--deep);color:var(--text);min-height:100vh;overflow-x:hidden}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw var(--d) ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.08}to{opacity:.85}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,8,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);letter-spacing:.05em;font-style:italic}
+.nav-links{display:flex;gap:1.5rem}
+.nav-links a{font-size:.82rem;color:var(--muted);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.chat-toggle{background:rgba(201,168,76,0.12);border:1px solid var(--border);border-radius:30px;padding:.45rem 1rem;font-size:.8rem;color:var(--gold);cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif}
+.chat-toggle:hover{background:rgba(201,168,76,0.2)}
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem}
+.orbit{width:100px;height:100px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2.5rem;position:relative;animation:spin 25s linear infinite}
+.orbit::before{content:'';position:absolute;width:8px;height:8px;background:var(--gold);border-radius:50%;top:-4px;left:50%;transform:translateX(-50%)}
+.orbit-inner{font-size:2.2rem;animation:spin-r 25s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin-r{to{transform:rotate(-360deg)}}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:600;line-height:1.05;letter-spacing:-.01em}
+h1 em{color:var(--gold);font-style:italic}
+.hero-sub{font-size:1.05rem;color:var(--muted);max-width:440px;margin:1.2rem auto 2.5rem;line-height:1.8;font-weight:300}
+.btn-hero{display:inline-flex;align-items:center;gap:.6rem;background:var(--gold);color:#080810;padding:.9rem 2rem;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:opacity .2s,transform .2s;text-decoration:none}
+.btn-hero:hover{opacity:.88;transform:translateY(-2px)}
+.scroll-hint{position:absolute;bottom:2rem;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.section{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:5rem 2rem}
+.sec-head{font-family:'Cormorant Garamond',serif;font-size:2rem;margin-bottom:.4rem}
+.sec-sub{color:var(--muted);font-size:.88rem;margin-bottom:2.5rem;font-weight:300}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.fg{display:flex;flex-direction:column;gap:.35rem}
+.fg.full{grid-column:1/-1}
+label{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);font-weight:500}
+input,select{background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:.8rem 1rem;font-size:.95rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;width:100%;appearance:none;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+input::placeholder{color:var(--muted)}
+select option{background:var(--s1)}
+.btn-main{width:100%;margin-top:1.25rem;padding:.95rem;background:var(--gold);color:#080810;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s;letter-spacing:.03em}
+.btn-main:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+.btn-main:disabled{opacity:.5;cursor:not-allowed}
+.err{background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:8px;padding:.8rem 1rem;font-size:.83rem;color:#F09595;margin-top:.75rem;display:none}
+.loading{display:none;flex-direction:column;align-items:center;padding:3rem 0;gap:1.2rem}
+.spin-orb{width:52px;height:52px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite}
+.load-txt{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--muted);font-size:1.1rem}
+.result-card{display:none;background:var(--s1);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-top:1.5rem}
+.rh{padding:1.75rem 1.75rem 1.25rem;border-bottom:1px solid var(--border);background:var(--s2)}
+.signs-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.sbadge{display:flex;align-items:center;gap:.45rem;background:rgba(201,168,76,.08);border:1px solid var(--border);border-radius:30px;padding:.35rem .85rem}
+.sbadge .sy{font-size:1.1rem}
+.sbadge .sn{font-size:.78rem;color:var(--gold);font-weight:500}
+.sbadge .st{font-size:.68rem;color:var(--muted)}
+.r-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:.2rem}
+.r-birth{font-size:.78rem;color:var(--muted)}
+.rb{padding:1.75rem}
+.rsec{margin-bottom:1.5rem}
+.rlbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:var(--gold);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.rlbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.rtxt{font-size:.9rem;line-height:1.85;color:rgba(238,234,228,.8);font-weight:300}
+.traits-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.6rem}
+.trait{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.9rem;text-align:center}
+.t-ic{font-size:1.3rem;margin-bottom:.3rem}
+.t-nm{font-size:.78rem;color:var(--gold);font-weight:500}
+.t-ds{font-size:.7rem;color:var(--muted);margin-top:.2rem}
+.luckies{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.lp{background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:20px;padding:.3rem .75rem;font-size:.78rem;color:rgba(238,234,228,.7)}
+.lp b{color:var(--gold);font-weight:500}
+.cosmic-box{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:1.25rem 1.5rem;margin-top:.6rem}
+.cosmic-txt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;line-height:1.8;color:var(--gold2)}
+.btn-reset{display:block;width:100%;margin-top:1rem;padding:.8rem;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Inter',sans-serif;font-size:.88rem;cursor:pointer;transition:color .2s,border-color .2s}
+.btn-reset:hover{color:var(--text);border-color:rgba(201,168,76,.4)}
+.feat-section{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:5rem 2rem}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:2.5rem}
+.fc{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:transform .2s,border-color .2s}
+.fc:hover{transform:translateY(-3px);border-color:rgba(201,168,76,.4)}
+.fc-ic{font-size:1.8rem;margin-bottom:.9rem}
+.fc-nm{font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:.4rem}
+.fc-ds{font-size:.83rem;color:var(--muted);line-height:1.65;font-weight:300}
+.chat-panel{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:.75rem}
+.chat-bubble{width:52px;height:52px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;border:none;box-shadow:0 4px 20px rgba(201,168,76,.35);transition:transform .2s}
+.chat-bubble:hover{transform:scale(1.08)}
+.chat-window{width:340px;background:var(--s1);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:none;flex-direction:column;max-height:500px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.chat-window.open{display:flex}
+.ch{background:var(--s2);padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ch-title{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold)}
+.ch-sub{font-size:.7rem;color:var(--muted)}
+.ch-close{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1;padding:.2rem}
+.ch-close:hover{color:var(--text)}
+.msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;scroll-behavior:smooth}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-track{background:transparent}
+.msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.msg{max-width:88%;padding:.7rem .95rem;border-radius:14px;font-size:.85rem;line-height:1.65}
+.msg.bot{background:var(--s2);border:1px solid var(--border);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.user{background:var(--gold);color:#080810;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500}
+.msg.typing{opacity:.6}
+.chat-input-row{padding:.85rem;border-top:1px solid var(--border);display:flex;gap:.5rem}
+.chat-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:.6rem .85rem;font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.chat-inp:focus{border-color:var(--gold)}
+.chat-inp::placeholder{color:var(--muted)}
+.chat-send{background:var(--gold);border:none;border-radius:8px;color:#080810;padding:.6rem .9rem;font-size:.9rem;cursor:pointer;transition:opacity .2s;font-weight:600}
+.chat-send:hover{opacity:.85}
+.chat-send:disabled{opacity:.4;cursor:not-allowed}
+footer{position:relative;z-index:1;text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem}
+footer a{color:var(--gold);text-decoration:none}
+.sec-badge{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;color:var(--muted);margin-top:1rem}
+.sec-dot{width:6px;height:6px;background:#4CAF50;border-radius:50%;flex-shrink:0}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:1}
+  .chat-window{width:calc(100vw - 3rem)}
+  .nav-links{display:none}
+  h1{font-size:2.8rem}
+}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<nav>
+  <div class="nav-logo">✦ AstroAI</div>
+  <div class="nav-links">
+    <a href="#reading">My Chart</a>
+    <a href="#features">Features</a>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()">☽ Ask Celeste</button>
+</nav>
+<section class="hero">
+  <div class="orbit"><span class="orbit-inner">✦</span></div>
+  <h1>Your Cosmic<br><em>Blueprint</em></h1>
+  <p class="hero-sub">Ancient star wisdom decoded by artificial intelligence. Your birth chart. Your personality. Your destiny.</p>
+  <a href="#reading" class="btn-hero">✦ Reveal My Stars</a>
+  <span class="scroll-hint">· scroll down ·</span>
+</section>
+<section class="section" id="reading">
+  <div class="sec-head">Read My Chart</div>
+  <div class="sec-sub">Enter your birth details for a personalized AI reading</div>
+  <div class="form-grid" id="formGrid">
+    <div class="fg full">
+      <label>Your Full Name</label>
+      <input type="text" id="nm" placeholder="Enter your name" autocomplete="off" />
+    </div>
+    <div class="fg">
+      <label>Date of Birth</label>
+      <input type="date" id="dob" />
+    </div>
+    <div class="fg">
+      <label>Time of Birth (optional)</label>
+      <input type="time" id="tob" />
+    </div>
+    <div class="fg full">
+      <label>City of Birth</label>
+      <input type="text" id="city" placeholder="e.g. Lahore, Pakistan" autocomplete="off" />
+    </div>
+    <div class="fg full">
+      <label>I seek guidance on</label>
+      <select id="focus">
+        <option value="general">✦ General Life Reading</option>
+        <option value="love">♡ Love & Relationships</option>
+        <option value="career">⬆ Career & Success</option>
+        <option value="wealth">◈ Wealth & Abundance</option>
+        <option value="spiritual">☽ Spiritual Growth</option>
+        <option value="health">◎ Health & Wellbeing</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn-main" id="goBtn" onclick="doReading()">✦ Reveal My Cosmic Blueprint</button>
+  <div class="err" id="err"></div>
+  <div style="text-align:center">
+    <span class="sec-badge"><span class="sec-dot"></span>Secure · Your data is never stored</span>
+  </div>
+  <div class="loading" id="loading">
+    <div class="spin-orb"></div>
+    <div class="load-txt" id="ltxt">Reading the celestial patterns...</div>
+  </div>
+  <div class="result-card" id="rcard">
+    <div class="rh">
+      <div class="signs-row" id="signsRow"></div>
+      <div class="r-name" id="rname"></div>
+      <div class="r-birth" id="rbirth"></div>
+    </div>
+    <div class="rb" id="rbody"></div>
+  </div>
+  <button class="btn-reset" id="resetBtn" style="display:none" onclick="doReset()">✦ Read Another Chart</button>
+</section>
+<section class="feat-section" id="features">
+  <div style="text-align:center">
+    <div class="sec-head" style="font-family:'Cormorant Garamond',serif;font-size:2rem">What AstroAI Reveals</div>
+    <div class="sec-sub" style="margin-top:.4rem">Ancient wisdom meets modern intelligence</div>
+  </div>
+  <div class="feat-grid">
+    <div class="fc"><div class="fc-ic">☽</div><div class="fc-nm">3-Sign Analysis</div><div class="fc-ds">Sun, Moon, and Rising signs decoded with AI-powered depth unique to your exact birth moment.</div></div>
+    <div class="fc"><div class="fc-ic">♡</div><div class="fc-nm">Love Compatibility</div><div class="fc-ds">Discover which signs you're cosmically aligned with and what your chart says about relationships.</div></div>
+    <div class="fc"><div class="fc-ic">✦</div><div class="fc-nm">Personality Blueprint</div><div class="fc-ds">Deep psychological insights drawn from planetary positions — far beyond a typical horoscope.</div></div>
+    <div class="fc"><div class="fc-ic">◎</div><div class="fc-nm">Life Path Guidance</div><div class="fc-ds">Career, spiritual, and wealth predictions aligned with your unique cosmic fingerprint.</div></div>
+    <div class="fc"><div class="fc-ic">◈</div><div class="fc-nm">Lucky Elements</div><div class="fc-ds">Your lucky numbers, colors, days, and gemstones from ancient astrological traditions.</div></div>
+    <div class="fc"><div class="fc-ic">☿</div><div class="fc-nm">Celeste AI Chatbot</div><div class="fc-ds">Ask your personal cosmic guide anything — available 24/7 to answer all your astrology questions.</div></div>
+  </div>
+</section>
+<footer>
+  <p>✦ AstroAI — Where the cosmos meets intelligence ✦</p>
+  <p style="margin-top:.5rem">Powered by <a href="https://chastrology.com">Chastrology</a> · Built with AI</p>
+</footer>
+<div class="chat-panel">
+  <div class="chat-window" id="chatWin">
+    <div class="ch">
+      <div>
+        <div class="ch-title">☽ Celeste</div>
+        <div class="ch-sub">Your cosmic guide · Online</div>
+      </div>
+      <button class="ch-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="msgs" id="msgs"></div>
+    <div class="chat-input-row">
+      <input class="chat-inp" id="chatInp" placeholder="Ask about your stars..." onkeydown="if(event.key==='Enter')sendMsg()" />
+      <button class="chat-send" id="chatSend" onclick="sendMsg()">↑</button>
+    </div>
+  </div>
+  <button class="chat-bubble" onclick="toggleChat()" title="Ask Celeste">☽</button>
+</div>
+<script>
+(function(){
+  const s=document.getElementById('stars');
+  for(let i=0;i<140;i++){
+    const d=document.createElement('div');d.className='star';
+    const sz=Math.random()*2.5+.4;
+    d.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*3+1.5).toFixed(1)}s;animation-delay:${(Math.random()*5).toFixed(1)}s`;
+    s.appendChild(d);
+  }
+})();
+const SIGNS=[
+  {name:'Capricorn',sym:'♑',s:[12,22],e:[1,19],element:'Earth',planet:'Saturn'},
+  {name:'Aquarius',sym:'♒',s:[1,20],e:[2,18],element:'Air',planet:'Uranus'},
+  {name:'Pisces',sym:'♓',s:[2,19],e:[3,20],element:'Water',planet:'Neptune'},
+  {name:'Aries',sym:'♈',s:[3,21],e:[4,19],element:'Fire',planet:'Mars'},
+  {name:'Taurus',sym:'♉',s:[4,20],e:[5,20],element:'Earth',planet:'Venus'},
+  {name:'Gemini',sym:'♊',s:[5,21],e:[6,20],element:'Air',planet:'Mercury'},
+  {name:'Cancer',sym:'♋',s:[6,21],e:[7,22],element:'Water',planet:'Moon'},
+  {name:'Leo',sym:'♌',s:[7,23],e:[8,22],element:'Fire',planet:'Sun'},
+  {name:'Virgo',sym:'♍',s:[8,23],e:[9,22],element:'Earth',planet:'Mercury'},
+  {name:'Libra',sym:'♎',s:[9,23],e:[10,22],element:'Air',planet:'Venus'},
+  {name:'Scorpio',sym:'♏',s:[10,23],e:[11,21],element:'Water',planet:'Pluto'},
+  {name:'Sagittarius',sym:'♐',s:[11,22],e:[12,21],element:'Fire',planet:'Jupiter'},
+];
+function getSun(m,d){for(const s of SIGNS){if(s.s[0]>s.e[0]){if((m===s.s[0]&&d>=s.s[1])||(m===s.e[0]&&d<=s.e[1]))return s;}else if((m===s.s[0]&&d>=s.s[1])||(m===s.e[0]&&d<=s.e[1]))return s;}return SIGNS[0];}
+function getMoon(dob){const d=new Date(dob);const i=Math.floor((d-new Date('2000-01-06'))/(1000*60*60*24*27.3));return SIGNS[((i%12)+12)%12];}
+function getRising(tob,dob){if(!tob)return SIGNS[Math.floor(new Date(dob).getDate()%12)];return SIGNS[(parseInt(tob)+new Date(dob).getMonth())%12];}
+const LCOLS=['Emerald Green','Midnight Blue','Royal Gold','Deep Violet','Crimson','Pearl White','Teal','Rose Pink','Obsidian','Amber'];
+const LNUMS=[3,7,11,14,21,28,33,42,9,18];
+const LDAYS=['Monday','Wednesday','Friday','Saturday','Thursday','Sunday','Tuesday'];
+const LGEMS=['Amethyst','Sapphire','Rose Quartz','Citrine','Moonstone','Emerald','Ruby','Pearl','Topaz','Obsidian'];
+const LMSGS=['Reading the celestial patterns...','Calculating planetary positions...','Consulting the ancient star maps...','Decoding your birth chart...','Aligning cosmic energies...'];
+let userCtx=null;
+async function doReading(){
+  const nm=document.getElementById('nm').value.trim();
+  const dob=document.getElementById('dob').value;
+  const tob=document.getElementById('tob').value;
+  const city=document.getElementById('city').value.trim();
+  const focus=document.getElementById('focus').value;
+  const errEl=document.getElementById('err');
+  errEl.style.display='none';
+  if(!nm||!dob||!city){errEl.textContent='Please fill in your name, date of birth, and city.';errEl.style.display='block';return;}
+  document.getElementById('goBtn').disabled=true;
+  document.getElementById('formGrid').style.opacity='.4';
+  document.getElementById('loading').style.display='flex';
+  document.getElementById('rcard').style.display='none';
+  document.getElementById('resetBtn').style.display='none';
+  let mi=0;
+  const lt=document.getElementById('ltxt');
+  const iv=setInterval(()=>{mi=(mi+1)%LMSGS.length;lt.textContent=LMSGS[mi];},1800);
+  const [yr,mo,dy]=dob.split('-').map(Number);
+  const sun=getSun(mo,dy);
+  const moon=getMoon(dob);
+  const rising=getRising(tob,dob);
+  const dobFmt=new Date(dob+'T12:00:00').toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const tobFmt=tob?` at ${tob}`:'';
+  try{
+    const res=await fetch('/api/reading',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,dob:dobFmt,tob,city,focus,sunSign:sun,moonSign:moon,risingSign:rising})});
+    clearInterval(iv);
+    document.getElementById('loading').style.display='none';
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'Server error');}
+    const {reading}=await res.json();
+    userCtx={name:nm,sun:sun.name,moon:moon.name,rising:rising.name,city,focus};
+    const seed=dy+mo;
+    const lc=LCOLS[seed%LCOLS.length];
+    const ln=LNUMS[seed%LNUMS.length];
+    const ld=LDAYS[seed%LDAYS.length];
+    const lg=LGEMS[seed%LGEMS.length];
+    document.getElementById('signsRow').innerHTML=`<div class="sbadge"><span class="sy">${sun.sym}</span><div><div class="sn">${sun.name}</div><div class="st">Sun Sign</div></div></div><div class="sbadge"><span class="sy">${moon.sym}</span><div><div class="sn">${moon.name}</div><div class="st">Moon Sign</div></div></div><div class="sbadge"><span class="sy">${rising.sym}</span><div><div class="sn">${rising.name}</div><div class="st">Rising Sign</div></div></div>`;
+    document.getElementById('rname').textContent=nm;
+    document.getElementById('rbirth').textContent=`Born ${dobFmt}${tobFmt} · ${city}`;
+    const tH=reading.strengths.map(t=>`<div class="trait"><div class="t-ic">${t.icon}</div><div class="t-nm">${t.name}</div><div class="t-ds">${t.desc}</div></div>`).join('');
+    const focusMap={general:'General Life Reading',love:'Love & Relationships',career:'Career & Success',wealth:'Wealth & Abundance',spiritual:'Spiritual Growth',health:'Health & Wellbeing'};
+    document.getElementById('rbody').innerHTML=`
+      <div class="rsec"><div class="rlbl">${sun.sym} Core Self — ${sun.name} Sun</div><p class="rtxt">${reading.personality}</p></div>
+      <div class="rsec"><div class="rlbl">☽ Inner World — ${moon.name} Moon</div><p class="rtxt">${reading.moonMind}</p></div>
+      <div class="rsec"><div class="rlbl">✦ Your Aura — ${rising.name} Rising</div><p class="rtxt">${reading.risingAura}</p></div>
+      <div class="rsec"><div class="rlbl">◎ ${focusMap[focus]}</div><p class="rtxt">${reading.focusReading}</p></div>
+      <div class="rsec"><div class="rlbl">Core Strengths</div><div class="traits-g">${tH}</div></div>
+      <div class="rsec"><div class="rlbl">Your Shadow & Challenge</div><p class="rtxt">${reading.challenge}</p></div>
+      <div class="rsec"><div class="rlbl">Lucky Elements</div><div class="luckies">
+        <div class="lp"><b>Color</b> · ${lc}</div>
+        <div class="lp"><b>Number</b> · ${ln}</div>
+        <div class="lp"><b>Day</b> · ${ld}</div>
+        <div class="lp"><b>Gem</b> · ${lg}</div>
+        <div class="lp"><b>Element</b> · ${sun.element}</div>
+        <div class="lp"><b>Planet</b> · ${sun.planet}</div>
+      </div></div>
+      <div class="rsec"><div class="rlbl">Message from the Cosmos</div>
+        <div class="cosmic-box"><p class="cosmic-txt">${reading.cosmicMessage}</p></div>
+      </div>`;
+    document.getElementById('rcard').style.display='block';
+    document.getElementById('resetBtn').style.display='block';
+    document.getElementById('formGrid').style.opacity='1';
+    document.getElementById('rcard').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){
+    clearInterval(iv);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('formGrid').style.opacity='1';
+    document.getElementById('goBtn').disabled=false;
+    errEl.textContent='The stars are momentarily misaligned. Please try again.';
+    errEl.style.display='block';
+  }
+}
+function doReset(){
+  document.getElementById('rcard').style.display='none';
+  document.getElementById('resetBtn').style.display='none';
+  document.getElementById('goBtn').disabled=false;
+  document.getElementById('nm').value='';
+  document.getElementById('dob').value='';
+  document.getElementById('tob').value='';
+  document.getElementById('city').value='';
+  document.getElementById('err').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+let chatOpen=false,chatHistory=[],chatStarted=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  const w=document.getElementById('chatWin');
+  chatOpen?w.classList.add('open'):w.classList.remove('open');
+  if(chatOpen&&!chatStarted){
+    chatStarted=true;
+    addBotMsg('✦ Welcome, dear soul. I am Celeste, your cosmic guide. Ask me anything about your chart, the stars, or the path ahead. ☽');
+    document.getElementById('chatInp').focus();
+  }
+}
+function addBotMsg(txt,typing=false){
+  const m=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg bot'+(typing?' typing':'');
+  d.textContent=txt;d.id=typing?'typingMsg':'';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+  return d;
+}
+function addUserMsg(txt){
+  const m=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg user';d.textContent=txt;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+async function sendMsg(){
+  const inp=document.getElementById('chatInp');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';
+  addUserMsg(txt);
+  chatHistory.push({role:'user',content:txt});
+  const sendBtn=document.getElementById('chatSend');
+  sendBtn.disabled=true;inp.disabled=true;
+  const typingEl=addBotMsg('...',true);
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHistory,userContext:userCtx})});
+    const data=await res.json();
+    typingEl.remove();
+    if(!res.ok)throw new Error(data.error);
+    addBotMsg(data.reply);
+    chatHistory.push({role:'assistant',content:data.reply});
+  }catch(e){
+    typingEl.remove();
+    addBotMsg('The cosmic signal was lost. Please try again. ✦');
+  }
+  sendBtn.disabled=false;inp.disabled=false;inp.focus();
+}
+</script>
+</body>
+</html>
