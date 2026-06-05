@@ -2,7 +2,8 @@
   "name": "astroai-pro",
   "version": "1.0.0",
   "description": "AstroAI - Secure AI Astrology App",
+  "type": "module",
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }
